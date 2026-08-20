@@ -228,6 +228,96 @@
 	};
 };
 
+&{/} {
+	npu_opp_table: npu-opp-table {
+	compatible = "operating-points-v2";
+
+	/* Basic RK3576 NPU OPPs; the BSP calibration data is not in 6.18. */
+	opp-300000000 {
+		opp-hz = /bits/ 64 <300000000>;
+		opp-microvolt = <725000 725000 875000>;
+	};
+
+	opp-400000000 {
+		opp-hz = /bits/ 64 <400000000>;
+		opp-microvolt = <725000 725000 875000>;
+	};
+
+	opp-500000000 {
+		opp-hz = /bits/ 64 <500000000>;
+		opp-microvolt = <725000 725000 875000>;
+	};
+
+	opp-600000000 {
+		opp-hz = /bits/ 64 <600000000>;
+		opp-microvolt = <737500 737500 875000>;
+	};
+
+	opp-700000000 {
+		opp-hz = /bits/ 64 <700000000>;
+		opp-microvolt = <775000 775000 875000>;
+	};
+
+	opp-800000000 {
+		opp-hz = /bits/ 64 <800000000>;
+		opp-microvolt = <800000 800000 875000>;
+	};
+
+	opp-900000000 {
+		opp-hz = /bits/ 64 <900000000>;
+		opp-microvolt = <850000 850000 875000>;
+	};
+
+	opp-950000000 {
+		opp-hz = /bits/ 64 <950000000>;
+		opp-microvolt = <875000 875000 875000>;
+	};
+	};
+
+	rknpu: npu@27700000 {
+	compatible = "rockchip,rk3576-rknpu";
+	reg = <0x0 0x27700000 0x0 0x8000>,
+	      <0x0 0x27708000 0x0 0x8000>;
+	interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
+		     <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>;
+	interrupt-names = "npu0_irq", "npu1_irq";
+	clocks = <&scmi_clk CLK_RKNN_DSU0>, <&cru ACLK_RKNN0>,
+		 <&cru ACLK_RKNN1>, <&cru HCLK_RKNN_ROOT>,
+		 <&cru ACLK_RKNN_CBUF>, <&cru HCLK_RKNN_CBUF>;
+	clock-names = "clk_npu", "aclk0", "aclk1", "hclk_root",
+		      "aclk_cbuf", "hclk_cbuf";
+	assigned-clocks = <&cru CLK_RKNN_DSU0>;
+	assigned-clock-rates = <198000000>;
+	resets = <&cru SRST_A_RKNN0>, <&cru SRST_A_RKNN1>,
+		 <&cru SRST_A_RKNN_CBUF>, <&cru SRST_H_RKNN_CBUF>;
+	reset-names = "srst_a0", "srst_a1", "srst_a_cbuf", "srst_h_cbuf";
+	power-domains = <&power RK3576_PD_NPU0>, <&power RK3576_PD_NPU1>;
+	power-domain-names = "npu0", "npu1";
+	operating-points-v2 = <&npu_opp_table>;
+	iommus = <&rknpu_mmu>;
+	rknpu-supply = <&vdd_npu_s0>;
+	#cooling-cells = <2>;
+	dynamic-power-coefficient = <2570>;
+	status = "okay";
+};
+
+	rknpu_mmu: iommu@27702000 {
+	compatible = "rockchip,rk3576-iommu", "rockchip,rk3568-iommu", "rockchip,iommu-v2";
+	reg = <0x0 0x27702000 0x0 0x100>,
+	      <0x0 0x27702100 0x0 0x100>,
+	      <0x0 0x2770a000 0x0 0x100>,
+	      <0x0 0x2770a100 0x0 0x100>;
+	interrupts = <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
+		     <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>;
+	interrupt-names = "npu0_mmu", "npu1_mmu";
+	clocks = <&cru ACLK_RKNN0>, <&cru ACLK_RKNN1>,
+		 <&cru ACLK_RKNN_CBUF>, <&cru HCLK_RKNN_CBUF>;
+	clock-names = "aclk0", "aclk1", "a_iface", "h_iface";
+	#iommu-cells = <0>;
+	status = "okay";
+};
+};
+
 &cpu_b0 {
 	cpu-supply = <&vdd_cpu_big_s0>;
 };
