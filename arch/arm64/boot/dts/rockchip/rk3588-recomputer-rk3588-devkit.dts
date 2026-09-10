@@ -226,7 +226,7 @@
 		compatible = "pwm-fan";
 		#cooling-cells = <2>;
 		pwms = <&pwm2 0 50000 0>;
-		cooling-levels = <25 45 60 75 100 130 170 210 255>;
+		cooling-levels = <0 45 60 75 100 130 170 210 255>;
 		interrupt-parent = <&gpio3>;
 		interrupts = <RK_PB6 IRQ_TYPE_EDGE_BOTH>;
 		pulses-per-revolution = <2>;
