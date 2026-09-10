@@ -40,7 +40,7 @@
 	};
 
 	chosen {
-		stdout-path = "serial0:1500000n8";
+		stdout-path = "serial2:1500000n8";
 	};
 
 	hdmi0-con {
@@ -353,6 +353,12 @@
 &uart6 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart6m1_xfer &uart6m1_ctsn &uart6m1_rtsn>;
+	status = "okay";
+};
+
+&uart2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart2m0_xfer>;
 	status = "okay";
 };
 
