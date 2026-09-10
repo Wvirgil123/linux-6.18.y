@@ -32,6 +32,8 @@
 	compatible = "seeed,recomputer-rk3588-devkit", "rockchip,rk3588";
 
 	aliases {
+		ethernet0 = &rtl8125_left;
+		ethernet1 = &rtl8125_right;
 		mmc0 = &sdhci;
 		mmc1 = &sdmmc;
 		mmc2 = &sdio;
@@ -369,46 +371,47 @@
  */
 &package_thermal {
 	polling-delay = <1000>;
+	polling-delay-passive = <2000>;
 
 	trips {
 		package_active1: trip-active1 {
-			temperature = <38000>;
-			hysteresis = <2000>;
+			temperature = <45000>;
+			hysteresis = <5000>;
 			type = "active";
 		};
 		package_active2: trip-active2 {
-			temperature = <44000>;
-			hysteresis = <2000>;
+			temperature = <50000>;
+			hysteresis = <5000>;
 			type = "active";
 		};
 		package_active3: trip-active3 {
-			temperature = <50000>;
-			hysteresis = <2000>;
+			temperature = <55000>;
+			hysteresis = <5000>;
 			type = "active";
 		};
 		package_active4: trip-active4 {
-			temperature = <56000>;
-			hysteresis = <2000>;
+			temperature = <60000>;
+			hysteresis = <5000>;
 			type = "active";
 		};
 		package_active5: trip-active5 {
-			temperature = <62000>;
-			hysteresis = <2000>;
+			temperature = <65000>;
+			hysteresis = <5000>;
 			type = "active";
 		};
 		package_active6: trip-active6 {
-			temperature = <68000>;
-			hysteresis = <2000>;
+			temperature = <70000>;
+			hysteresis = <5000>;
 			type = "active";
 		};
 		package_active7: trip-active7 {
-			temperature = <74000>;
-			hysteresis = <2000>;
+			temperature = <75000>;
+			hysteresis = <5000>;
 			type = "active";
 		};
 		package_active8: trip-active8 {
 			temperature = <80000>;
-			hysteresis = <2000>;
+			hysteresis = <1000>;
 			type = "active";
 		};
 	};
@@ -416,35 +419,43 @@
 	cooling-maps {
 		map1 {
 			trip = <&package_active1>;
-			cooling-device = <&fan0 1 1>;
+			cooling-device = <&fan0 0 1>;
+			contribution = <1024>;
 		};
 		map2 {
 			trip = <&package_active2>;
-			cooling-device = <&fan0 2 2>;
+			cooling-device = <&fan0 1 2>;
+			contribution = <1024>;
 		};
 		map3 {
 			trip = <&package_active3>;
-			cooling-device = <&fan0 3 3>;
+			cooling-device = <&fan0 2 3>;
+			contribution = <1024>;
 		};
 		map4 {
 			trip = <&package_active4>;
-			cooling-device = <&fan0 4 4>;
+			cooling-device = <&fan0 3 4>;
+			contribution = <1024>;
 		};
 		map5 {
 			trip = <&package_active5>;
-			cooling-device = <&fan0 5 5>;
+			cooling-device = <&fan0 4 5>;
+			contribution = <1024>;
 		};
 		map6 {
 			trip = <&package_active6>;
-			cooling-device = <&fan0 6 6>;
+			cooling-device = <&fan0 5 6>;
+			contribution = <1024>;
 		};
 		map7 {
 			trip = <&package_active7>;
-			cooling-device = <&fan0 7 7>;
+			cooling-device = <&fan0 6 7>;
+			contribution = <1024>;
 		};
 		map8 {
 			trip = <&package_active8>;
-			cooling-device = <&fan0 8 8>;
+			cooling-device = <&fan0 7 8>;
+			contribution = <1024>;
 		};
 	};
 };
@@ -654,9 +665,24 @@
 
 &pcie2x1l0 {
 	reset-gpios = <&gpio4 RK_PA5 GPIO_ACTIVE_HIGH>;
-	realtek,led-data = <0x18 0x022B 0x96 0x002B>;
 	vpcie3v3-supply = <&vcc5v0_usb_eth>;
 	status = "okay";
+
+	pcie@0,0 {
+		reg = <0x00200000 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+		bus-range = <0x20 0x2f>;
+		device_type = "pci";
+		ranges;
+
+		rtl8125_right: ethernet@0,0 {
+			compatible = "pci10ec,8125";
+			reg = <0x210000 0 0 0 0>;
+			r8125,led0 = <0x022b>;
+			r8125,led3 = <0x002b>;
+		};
+	};
 };
 
 &pcie2x1l1 {
@@ -667,9 +693,24 @@
 
 &pcie2x1l2 {
 	reset-gpios = <&gpio3 RK_PD0 GPIO_ACTIVE_HIGH>;
-	realtek,led-data = <0x18 0x022B 0x96 0x002B>;
 	vpcie3v3-supply = <&vcc5v0_usb_eth>;
 	status = "okay";
+
+	pcie@0,0 {
+		reg = <0x00400000 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+		bus-range = <0x40 0x4f>;
+		device_type = "pci";
+		ranges;
+
+		rtl8125_left: ethernet@0,0 {
+			compatible = "pci10ec,8125";
+			reg = <0x410000 0 0 0 0>;
+			r8125,led0 = <0x022b>;
+			r8125,led3 = <0x002b>;
+		};
+	};
 };
 
 &pcie30phy {
